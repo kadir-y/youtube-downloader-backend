@@ -1,13 +1,16 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
+var cors = require('cors');
+
+app.use(cors());
 
 require('dotenv').config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'production') {
     app.use(morgan('combined'));
 } else {
     app.use(morgan('dev'));
@@ -15,7 +18,11 @@ if (process.env.NODE_ENV !== 'production') {
 
 const indexRouter = require('./routes/index');
 
-app.use('/', indexRouter);
+app.use('/api', indexRouter);
+
+app.use('/api/ping', (req, res) => {
+    res.send('ok');
+});
 
 // handle 404 - Not Found
 app.use((req, res, next) => {
@@ -31,6 +38,9 @@ app.use((err, req, res, next) => {
         message: err.message,
         ...(process.env.NODE_ENV !== 'production' ? { stack: err.stack } : {})
     });
+    if (process.env.NODE_ENV !== 'production') {
+        console.error(err)
+    }
 });
 
 module.exports = app;
