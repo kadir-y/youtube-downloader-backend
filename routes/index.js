@@ -5,7 +5,8 @@ const getThumbnail = require('../libs/getThumbnail');
 const fs = require('fs');
 const { createWriteStream } = require('fs');
 const path = require('path');
-const { v4: uuid } = require('uuid');
+const uuid = require('uuid');
+const v4 = uuid.v4;
 
 router.get('/get-metadata', async (req, res, next) => {
   try {
